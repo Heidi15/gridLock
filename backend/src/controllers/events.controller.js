@@ -9,8 +9,8 @@ const getEvents = async (req, res, next) => {
     const { type, mois } = req.query;
 
     const where = {};
-    if (type) where.type = type;
-    if (mois) where.mois = mois;
+    if (type) { where.type = type; }
+    if (mois) { where.mois = mois; }
 
     const events = await prisma.event.findMany({
       where,
@@ -98,7 +98,7 @@ const updateEvent = async (req, res, next) => {
     }
 
     const data = { ...req.body };
-    if (data.dateEvent) data.dateEvent = new Date(data.dateEvent);
+    if (data.dateEvent) { data.dateEvent = new Date(data.dateEvent); }
 
     const event = await prisma.event.update({
       where: { id: req.params.id },

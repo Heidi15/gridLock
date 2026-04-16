@@ -16,8 +16,8 @@ const updateParticipation = async (req, res, next) => {
     }
 
     const data = {};
-    if (req.body.statut !== undefined) data.statut = req.body.statut;
-    if (req.body.estAmbassadeur !== undefined) data.estAmbassadeur = req.body.estAmbassadeur;
+    if (req.body.statut !== undefined) { data.statut = req.body.statut; }
+    if (req.body.estAmbassadeur !== undefined) { data.estAmbassadeur = req.body.estAmbassadeur; }
 
     const participation = await prisma.participation.update({
       where: { id: req.params.id },

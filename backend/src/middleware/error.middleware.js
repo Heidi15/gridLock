@@ -5,7 +5,7 @@
  * - Les erreurs techniques (500) retournent un message générique.
  * - La stack trace n'est JAMAIS envoyée au client (cf. US13).
  */
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, _next) => {
   // Log côté serveur uniquement
   if (process.env.NODE_ENV !== 'test') {
     console.error(`[${new Date().toISOString()}] ERROR ${req.method} ${req.path}:`, err.message);
