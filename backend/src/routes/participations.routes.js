@@ -6,7 +6,7 @@ const validate = require('../middleware/validate.middleware');
 const { participationUpdateSchema } = require('../validators/schemas');
 const { updateParticipation, deleteParticipation } = require('../controllers/participations.controller');
 
-router.put('/:id', auth, requireRole('admin'), validate(participationUpdateSchema), updateParticipation);
-router.delete('/:id', auth, requireRole('admin'), deleteParticipation);
+router.put('/:id', auth, requireRole('admin', 'director'), validate(participationUpdateSchema), updateParticipation);
+router.delete('/:id', auth, deleteParticipation);
 
 module.exports = router;

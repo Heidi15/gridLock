@@ -3,16 +3,22 @@ const prisma = require('../utils/prisma');
 /**
  * PUT /api/participations/:id
  * Met à jour le statut ou le flag ambassadeur d'une participation.
- * Admin uniquement.
+ * Admin/director uniquement.
  */
 const updateParticipation = async (req, res, next) => {
   try {
     const existing = await prisma.participation.findUnique({
       where: { id: req.params.id },
+      include: { event: { select: { dateEvent: true } } },
     });
 
     if (!existing) {
       return res.status(404).json({ error: 'Participation introuvable.' });
+    }
+
+    const now = new Date();
+    if (existing.event && new Date(existing.event.dateEvent) < now && req.user.role === 'student') {
+      return res.status(403).json({ error: 'Vous ne pouvez pas modifier une participation passée.' });
     }
 
     const data = {};
@@ -35,16 +41,25 @@ const updateParticipation = async (req, res, next) => {
 
 /**
  * DELETE /api/participations/:id
- * Supprime une participation. Admin uniquement.
+ * Supprime une participation.
+ * - Admin/Director : peut supprimer n'importe quelle participation
+ * - Student : ne peut supprimer que sa propre participation
  */
 const deleteParticipation = async (req, res, next) => {
   try {
-    const existing = await prisma.participation.findUnique({
+    const participation = await prisma.participation.findUnique({
       where: { id: req.params.id },
     });
 
-    if (!existing) {
+    if (!participation) {
       return res.status(404).json({ error: 'Participation introuvable.' });
+    }
+
+    // Contrôle d'accès : les étudiants ne peuvent supprimer que leur propre participation
+    if (req.user.role === 'student') {
+      if (!req.user.studentId || participation.studentId !== req.user.studentId) {
+        return res.status(403).json({ error: "Vous ne pouvez supprimer que vos propres participations." });
+      }
     }
 
     await prisma.participation.delete({ where: { id: req.params.id } });

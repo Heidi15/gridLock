@@ -9,6 +9,8 @@ const NAV_ADMIN = [
 ];
 
 const NAV_STUDENT = [
+  { to: '/dashboard', label: 'Tableau de bord', icon: '📊' },
+  { to: '/events', label: 'Événements', icon: '📅' },
   { to: '/my-participations', label: 'Mes participations', icon: '📋' },
 ];
 
