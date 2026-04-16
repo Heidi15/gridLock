@@ -1,5 +1,19 @@
 const prisma = require('../utils/prisma');
 
+const MOIS_FR = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+];
+
+/**
+ * Dérive le nom du mois en français depuis une date ISO.
+ * @param {string} dateStr
+ * @returns {string} Ex: 'Octobre'
+ */
+const getMoisFromDate = (dateStr) => {
+  return MOIS_FR[new Date(dateStr).getMonth()];
+};
+
 /**
  * GET /api/events
  * Liste tous les événements avec filtres optionnels (type, mois, formation).
@@ -9,8 +23,8 @@ const getEvents = async (req, res, next) => {
     const { type, mois } = req.query;
 
     const where = {};
-    if (type) { where.type = type; }
-    if (mois) { where.mois = mois; }
+    if (type) where.type = type;
+    if (mois) where.mois = mois;
 
     const events = await prisma.event.findMany({
       where,
@@ -33,11 +47,11 @@ const getEvents = async (req, res, next) => {
  */
 const createEvent = async (req, res, next) => {
   try {
-    const { mois, type, dateEvent, nomStructure, nomEvenement, ville, horaires, besoins } = req.body;
+    const { type, dateEvent, nomStructure, nomEvenement, ville, horaires, besoins } = req.body;
 
     const event = await prisma.event.create({
       data: {
-        mois,
+        mois: getMoisFromDate(dateEvent),
         type,
         dateEvent: new Date(dateEvent),
         nomStructure,
@@ -98,7 +112,10 @@ const updateEvent = async (req, res, next) => {
     }
 
     const data = { ...req.body };
-    if (data.dateEvent) { data.dateEvent = new Date(data.dateEvent); }
+    if (data.dateEvent) {
+      data.mois = getMoisFromDate(data.dateEvent);
+      data.dateEvent = new Date(data.dateEvent);
+    }
 
     const event = await prisma.event.update({
       where: { id: req.params.id },
@@ -162,6 +179,10 @@ const getEventParticipations = async (req, res, next) => {
  * POST /api/events/:id/participations
  * Inscrit un étudiant à un événement.
  *
+ * Comportement selon le rôle :
+ * - Admin/Director : peut inscrire n'importe quel étudiant (via studentId dans le body)
+ * - Student : peut s'inscrire lui-même uniquement
+ *
  * Vérification doublon AVANT insert : Prisma ne remonte pas d'erreur
  * suffisamment descriptive sur la contrainte UNIQUE en PostgreSQL.
  * La vérification explicite permet un message d'erreur métier précis (409).
@@ -177,29 +198,60 @@ const createParticipation = async (req, res, next) => {
       return res.status(404).json({ error: 'Événement introuvable.' });
     }
 
+    const now = new Date();
+    if (new Date(event.dateEvent) < now) {
+      return res.status(400).json({ error: "Impossible d'inscrire un étudiant à un événement déjà passé." });
+    }
+
+    // Contrôle d'accès et détermination de l'étudiant cible
+    let targetStudentId = studentId;
+    if (req.user.role === 'student') {
+      if (!req.user.studentId) {
+        return res.status(403).json({ error: 'Aucun profil étudiant lié à ce compte.' });
+      }
+      // L'étudiant ne peut s'inscrire que pour lui-même
+      if (studentId && studentId !== req.user.studentId) {
+        return res.status(403).json({ error: "Vous ne pouvez vous inscrire que pour vous-même." });
+      }
+      targetStudentId = req.user.studentId;
+    } else {
+      // Les admins/directeurs doivent fournir un studentId
+      if (!studentId) {
+        return res.status(400).json({ error: "L'identifiant étudiant est requis pour les administrateurs." });
+      }
+    }
+
     // Vérifie l'existence de l'étudiant
-    const student = await prisma.student.findUnique({ where: { id: studentId } });
+    const student = await prisma.student.findUnique({ where: { id: targetStudentId } });
     if (!student) {
       return res.status(404).json({ error: 'Étudiant introuvable.' });
     }
 
     // Vérification doublon avant insert
     const existing = await prisma.participation.count({
-      where: { eventId, studentId },
+      where: { eventId, studentId: targetStudentId },
     });
 
     if (existing > 0) {
       return res.status(409).json({ error: 'Cet étudiant est déjà inscrit à cet événement.' });
     }
 
+    // Les étudiants s'inscrivent automatiquement en tant que "confirme"
+    // Les admins peuvent définir le statut et le flag ambassadeur
+    const data = {
+      eventId,
+      studentId: targetStudentId,
+      statut: req.user.role === 'student' ? 'confirme' : (statut || 'confirme'),
+      estAmbassadeur: req.user.role === 'student' ? false : (estAmbassadeur || false),
+    };
+
+    // Seuls les admins/directors définissent qui confirme la participation
+    if (req.user.role !== 'student') {
+      data.confirmePar = req.user.id;
+    }
+
     const participation = await prisma.participation.create({
-      data: {
-        eventId,
-        studentId,
-        statut: statut || 'confirme',
-        estAmbassadeur: estAmbassadeur || false,
-        confirmePar: req.user.id,
-      },
+      data,
       include: {
         student: {
           select: { id: true, nom: true, prenom: true, formation: true },

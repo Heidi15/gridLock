@@ -14,17 +14,18 @@ const {
   createParticipation,
 } = require('../controllers/events.controller');
 
-// Liste et création d'événements
-router.get('/', auth, requireRole('admin', 'director'), getEvents);
-router.post('/', auth, requireRole('admin'), validate(eventCreateSchema), createEvent);
+// Lecture : tous les rôles authentifiés peuvent voir les événements
+router.get('/', auth, getEvents);
+router.get('/:id', auth, getEventById);
+router.get('/:id/participations', auth, getEventParticipations);
 
-// Détail, modification, suppression d'un événement
-router.get('/:id', auth, requireRole('admin', 'director'), getEventById);
+// Écriture : admin uniquement
+router.post('/', auth, requireRole('admin'), validate(eventCreateSchema), createEvent);
 router.put('/:id', auth, requireRole('admin'), validate(eventUpdateSchema), updateEvent);
 router.delete('/:id', auth, requireRole('admin'), deleteEvent);
 
-// Participations d'un événement
-router.get('/:id/participations', auth, requireRole('admin', 'director'), getEventParticipations);
-router.post('/:id/participations', auth, requireRole('admin'), validate(participationCreateSchema), createParticipation);
+// Inscription : tous les utilisateurs authentifiés
+// Les étudiants peuvent s'inscrire eux-mêmes, les admins peuvent inscrire n'importe quel étudiant
+router.post('/:id/participations', auth, validate(participationCreateSchema), createParticipation);
 
 module.exports = router;

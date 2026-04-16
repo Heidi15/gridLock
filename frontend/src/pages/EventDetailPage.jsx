@@ -119,13 +119,14 @@ const AddParticipantModal = ({ eventId, isOpen, onClose, onAdded }) => {
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAdmin } = useAuth();
+  const { user, isAdmin, isDirector } = useAuth();
   const { success, error: toastError } = useToast();
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // id participation à supprimer
+  const [subscribing, setSubscribing] = useState(false); // en cours d'inscription
 
   const load = useCallback(async () => {
     try {
@@ -182,6 +183,40 @@ const EventDetailPage = () => {
     }
   };
 
+  // Inscription d'un étudiant pour lui-même
+  const handleSubscribe = async () => {
+    if (eventPassed) {
+      toastError("Impossible de s'inscrire à un événement déjà passé.");
+      return;
+    }
+    setSubscribing(true);
+    try {
+      await api.post(`/events/${id}/participations`, {});
+      success('Inscription confirmée !');
+      load();
+    } catch (err) {
+      toastError(getErrorMessage(err));
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
+  // Désinscription
+  const handleUnsubscribe = async () => {
+    const participation = event.participations?.find(p => p.student.id === user?.studentId);
+    if (!participation) return;
+
+    if (!window.confirm(`Voulez-vous vous désinscrire de cet événement ?`)) return;
+
+    try {
+      await api.delete(`/participations/${participation.id}`);
+      success('Inscription annulée.');
+      load();
+    } catch (err) {
+      toastError(getErrorMessage(err));
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -195,6 +230,8 @@ const EventDetailPage = () => {
   const participations = event.participations || [];
   const nbPresents = participations.filter((p) => p.statut === 'present').length;
   const nbAmbassadeurs = participations.filter((p) => p.estAmbassadeur).length;
+  const eventPassed = new Date(event.dateEvent) < new Date();
+  const canManageParticipation = isAdmin || isDirector;
 
   return (
     <div>
@@ -222,13 +259,36 @@ const EventDetailPage = () => {
             </div>
           </div>
 
-          {isAdmin && (
-            <div className="flex gap-2">
+          <div className="flex gap-2">
+            {/* Boutons pour les admins */}
+            {canManageParticipation && (
               <Button variant="danger" onClick={handleDeleteEvent}>
                 Supprimer
               </Button>
-            </div>
-          )}
+            )}
+
+            {/* Boutons pour les étudiants */}
+            {user?.role === 'student' && !isAdmin && (
+              <>
+                {event.participations?.find(p => p.student.id === user?.studentId) ? (
+                  <Button
+                    variant="danger"
+                    onClick={handleUnsubscribe}
+                  >
+                    Se désinscrire
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleSubscribe}
+                    loading={subscribing}
+                    disabled={subscribing || eventPassed}
+                  >
+                    S'inscrire
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Compteurs */}
@@ -249,7 +309,7 @@ const EventDetailPage = () => {
       <div className="card">
         <div className="flex items-center justify-between p-5 border-b border-neutral-100">
           <h2 className="font-display text-base font-bold text-navy">Participants</h2>
-          {isAdmin && (
+          {canManageParticipation && (
             <Button onClick={() => setShowAdd(true)}>+ Ajouter un participant</Button>
           )}
         </div>
@@ -258,14 +318,14 @@ const EventDetailPage = () => {
           <EmptyState
             icon="👥"
             message="Aucun participant inscrit à cet événement."
-            cta={isAdmin && <Button onClick={() => setShowAdd(true)}>Inscrire un étudiant</Button>}
+            cta={canManageParticipation && <Button onClick={() => setShowAdd(true)}>Inscrire un étudiant</Button>}
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-neutral-50 border-b border-neutral-100">
                 <tr>
-                  {['Nom / Prénom', 'Formation', 'Statut', 'Ambassadeur', isAdmin ? 'Actions' : ''].map((h) => (
+                  {['Nom / Prénom', 'Formation', 'Statut', 'Ambassadeur', canManageParticipation ? 'Actions' : ''].map((h) => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
                       {h}
                     </th>
@@ -280,7 +340,7 @@ const EventDetailPage = () => {
                     </td>
                     <td className="px-4 py-3 text-slate-500 text-xs">{p.student.formation}</td>
                     <td className="px-4 py-3">
-                      {isAdmin ? (
+                      {canManageParticipation ? (
                         <select
                           value={p.statut}
                           onChange={(e) => handleStatutChange(p.id, e.target.value)}
@@ -295,7 +355,7 @@ const EventDetailPage = () => {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      {isAdmin ? (
+                      {canManageParticipation ? (
                         <input
                           type="checkbox"
                           checked={p.estAmbassadeur}
@@ -307,7 +367,7 @@ const EventDetailPage = () => {
                         p.estAmbassadeur && <AmbassadeurBadge />
                       )}
                     </td>
-                    {isAdmin && (
+                    {canManageParticipation && (
                       <td className="px-4 py-3">
                         <button
                           onClick={() => setDeleteConfirm(p.id)}
