@@ -15,10 +15,15 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       navigate('/login?reason=expired');
     };
+    const handleForbidden = () => {
+      navigate('/403');
+    };
 
     window.addEventListener('auth:expired', handleExpired);
+    window.addEventListener('auth:forbidden', handleForbidden);
     return () => {
       window.removeEventListener('auth:expired', handleExpired);
+      window.removeEventListener('auth:forbidden', handleForbidden);
     };
   }, [navigate]);
 
@@ -26,6 +31,17 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const data = await authService.login(email, password);
+      setUser(data.user);
+      return data.user;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const register = useCallback(async (nom, prenom, email, password, formation) => {
+    setLoading(true);
+    try {
+      const data = await authService.register(nom, prenom, email, password, formation);
       setUser(data.user);
       return data.user;
     } finally {
@@ -44,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   const isStudent = user?.role === 'student';
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAdmin, isDirector, isStudent }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin, isDirector, isStudent }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import Button from '../components/Button.jsx';
@@ -138,6 +138,11 @@ const LoginPage = () => {
               <div>🎓 <strong>Étudiant :</strong> enzo.martin@edu.esiee-it.fr / Student1!</div>
             </div>
           </details>
+
+          <p className="text-center text-xs text-slate-400 mt-4">
+            Pas encore de compte ?{' '}
+            <Link to="/register" className="text-accent hover:underline">S'inscrire</Link>
+          </p>
         </div>
       </div>
     </div>

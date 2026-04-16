@@ -1,5 +1,12 @@
 import api from './api.js';
 
+const register = async (nom, prenom, email, password, formation) => {
+  const { data } = await api.post('/auth/register', { nom, prenom, email, password, formation });
+  localStorage.setItem('gridlock_token', data.token);
+  localStorage.setItem('gridlock_user', JSON.stringify(data.user));
+  return data;
+};
+
 const login = async (email, password) => {
   const { data } = await api.post('/auth/login', { email, password });
   localStorage.setItem('gridlock_token', data.token);
@@ -27,4 +34,4 @@ const getStoredUser = () => {
 
 const getToken = () => localStorage.getItem('gridlock_token');
 
-export default { login, logout, getStoredUser, getToken };
+export default { register, login, logout, getStoredUser, getToken };

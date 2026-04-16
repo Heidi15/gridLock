@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
 
 import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import EventsPage from './pages/EventsPage.jsx';
 import EventDetailPage from './pages/EventDetailPage.jsx';
@@ -14,7 +15,6 @@ import Page403 from './pages/Page403.jsx';
 import Page404 from './pages/Page404.jsx';
 import Layout from './components/Layout.jsx';
 
-// Route protégée : redirige vers /login si non authentifié
 const PrivateRoute = ({ children, roles }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
@@ -25,6 +25,7 @@ const PrivateRoute = ({ children, roles }) => {
 const AppRoutes = () => (
   <Routes>
     <Route path="/login" element={<LoginPage />} />
+    <Route path="/register" element={<RegisterPage />} />
     <Route path="/403" element={<Page403 />} />
     <Route path="*" element={<Page404 />} />
 
@@ -37,30 +38,15 @@ const AppRoutes = () => (
       }
     >
       <Route index element={<Navigate to="/dashboard" replace />} />
-      <Route
-        path="dashboard"
-        element={
-          <PrivateRoute roles={['admin', 'director']}>
-            <DashboardPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="events"
-        element={
-          <PrivateRoute roles={['admin', 'director']}>
-            <EventsPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="events/:id"
-        element={
-          <PrivateRoute roles={['admin', 'director']}>
-            <EventDetailPage />
-          </PrivateRoute>
-        }
-      />
+
+      {/* Dashboard accessible à tous les rôles */}
+      <Route path="dashboard" element={<DashboardPage />} />
+
+      {/* Événements : lecture pour tous, écriture admin seulement (géré dans les composants) */}
+      <Route path="events" element={<EventsPage />} />
+      <Route path="events/:id" element={<EventDetailPage />} />
+
+      {/* Étudiants : admin et director uniquement */}
       <Route
         path="students"
         element={
@@ -77,6 +63,8 @@ const AppRoutes = () => (
           </PrivateRoute>
         }
       />
+
+      {/* Vue personnelle étudiant */}
       <Route
         path="my-participations"
         element={
