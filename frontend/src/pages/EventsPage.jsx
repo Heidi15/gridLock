@@ -110,6 +110,7 @@ const EventForm = React.memo(({ onSubmit, loading }) => {
     </form>
   );
 });
+EventForm.displayName = 'EventForm';
 
 // ─── Page principale ────────────────────────────────────────────────────────
 const EventsPage = () => {
@@ -156,7 +157,7 @@ const EventsPage = () => {
     } finally {
       setCreating(false);
     }
-  }, [success, toastError, load]);
+  }, [success, toastError, load, setSearchParams]);
 
   // Filtre passé/à venir côté frontend
   const now = new Date();

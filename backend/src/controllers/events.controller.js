@@ -23,8 +23,12 @@ const getEvents = async (req, res, next) => {
     const { type, mois } = req.query;
 
     const where = {};
-    if (type) where.type = type;
-    if (mois) where.mois = mois;
+    if (type) {
+      where.type = type;
+    }
+    if (mois) {
+      where.mois = mois;
+    }
 
     const events = await prisma.event.findMany({
       where,

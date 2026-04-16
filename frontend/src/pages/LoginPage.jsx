@@ -141,7 +141,7 @@ const LoginPage = () => {
 
           <p className="text-center text-xs text-slate-400 mt-4">
             Pas encore de compte ?{' '}
-            <Link to="/register" className="text-accent hover:underline">S'inscrire</Link>
+            <Link to="/register" className="text-accent hover:underline">S&apos;inscrire</Link>
           </p>
         </div>
       </div>

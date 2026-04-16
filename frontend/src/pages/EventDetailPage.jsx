@@ -283,7 +283,7 @@ const EventDetailPage = () => {
                     loading={subscribing}
                     disabled={subscribing || eventPassed}
                   >
-                    S'inscrire
+                    S&apos;inscrire
                   </Button>
                 )}
               </>

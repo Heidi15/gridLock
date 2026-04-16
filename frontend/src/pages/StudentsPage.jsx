@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api.js';
-import EmptyState from '../components/EmptyState.jsx';
 
 const StudentsPage = () => {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ const StudentsPage = () => {
   useEffect(() => {
     api.get('/students/all')
       .then((res) => setAllStudents(res.data))
-      .catch(() => {})
+      .catch(() => { /* silently ignore load error */ })
       .finally(() => setLoadingAll(false));
   }, []);
 

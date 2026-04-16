@@ -88,10 +88,18 @@ const updateStudent = async (req, res, next) => {
     }
 
     const data = {};
-    if (nom !== undefined) data.nom = nom.toUpperCase();
-    if (prenom !== undefined) data.prenom = prenom;
-    if (formation !== undefined) data.formation = formation;
-    if (annee !== undefined) data.annee = annee;
+    if (nom !== undefined) {
+      data.nom = nom.toUpperCase();
+    }
+    if (prenom !== undefined) {
+      data.prenom = prenom;
+    }
+    if (formation !== undefined) {
+      data.formation = formation;
+    }
+    if (annee !== undefined) {
+      data.annee = annee;
+    }
 
     if (Object.keys(data).length === 0) {
       return res.status(400).json({ error: 'Aucune donnée à mettre à jour.' });

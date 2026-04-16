@@ -67,8 +67,6 @@ const MyParticipationsPage = () => {
     : participations;
 
   const types = [...new Set(participations.map((p) => p.event.type))];
-  const nbPresents = participations.filter((p) => p.statut === 'present').length;
-  const nbAmbassadeurs = participations.filter((p) => p.estAmbassadeur).length;
 
   return (
     <div>

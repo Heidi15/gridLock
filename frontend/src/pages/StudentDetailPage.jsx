@@ -278,7 +278,7 @@ const StudentDetailPage = () => {
             Êtes-vous sûr de vouloir supprimer cet étudiant ?
           </p>
           <p className="text-slate-500 text-sm mb-6">
-            Cette action est irréversible. Toutes les données de l'étudiant, ses participations et son compte utilisateur seront supprimés.
+            Cette action est irréversible. Toutes les données de l&apos;étudiant, ses participations et son compte utilisateur seront supprimés.
           </p>
           <div className="flex justify-center gap-3">
             <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>

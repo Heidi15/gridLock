@@ -8,7 +8,7 @@ import Button from '../components/Button.jsx';
 import { formatDate } from '../utils/helpers.js';
 
 const DashboardPage = () => {
-  const { user, isAdmin, isDirector } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
