@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  student
+  director
+}
+
+enum EventType {
+  JPO
+  Salon
+  Forum
+  Evenement
+}
+
+enum ParticipationStatut {
+  confirme
+  present
+  absent
+}
+
+model User {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String   @unique @db.VarChar(255)
+  passwordHash  String   @map("password_hash") @db.VarChar(255)
+  role          Role     @default(student)
+  studentId     String?  @map("student_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  student        Student?        @relation(fields: [studentId], references: [id])
+  eventsCreated  Event[]         @relation("EventCreator")
+  confirmations  Participation[] @relation("ConfirmedBy")
+
+  @@map("users")
+}
+
+model Student {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nom          String   @db.VarChar(100)
+  prenom       String   @db.VarChar(100)
+  email        String?  @unique @db.VarChar(255)
+  telephone    String?  @db.VarChar(20)
+  formation    String   @db.VarChar(150)
+  annee        String?  @db.VarChar(50)
+  etabOrigine  String?  @map("etab_origine") @db.VarChar(200)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user           User[]
+  participations Participation[]
+
+  @@map("students")
+}
+
+model Event {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mois          String    @db.VarChar(20)
+  type          EventType
+  dateEvent     DateTime  @map("date_event") @db.Date
+  nomStructure  String    @map("nom_structure") @db.VarChar(300)
+  nomEvenement  String    @map("nom_evenement") @db.VarChar(300)
+  ville         String    @db.VarChar(100)
+  horaires      String?   @db.VarChar(100)
+  besoins       String?   @db.VarChar(300)
+  createdBy     String    @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  creator        User            @relation("EventCreator", fields: [createdBy], references: [id])
+  participations Participation[]
+
+  @@map("events")
+}
+
+model Participation {
+  id              String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId         String              @map("event_id") @db.Uuid
+  studentId       String              @map("student_id") @db.Uuid
+  statut          ParticipationStatut @default(confirme)
+  estAmbassadeur  Boolean             @default(false) @map("est_ambassadeur")
+  confirmePar     String?             @map("confirme_par") @db.Uuid
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+
+  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  student     Student @relation(fields: [studentId], references: [id])
+  confirmator User?   @relation("ConfirmedBy", fields: [confirmePar], references: [id])
+
+  @@unique([eventId, studentId])
+  @@map("participations")
+}
