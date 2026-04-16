@@ -66,7 +66,7 @@ const AddParticipantModal = ({ eventId, isOpen, onClose, onAdded }) => {
     <Modal isOpen={isOpen} onClose={onClose} title="Inscrire un étudiant">
       <form onSubmit={handleSubmit} noValidate>
         <div className="mb-4 relative">
-          <label className="label">Nom de l'étudiant *</label>
+          <label className="label">Nom de l&apos;étudiant *</label>
           <input
             type="text"
             value={query}
@@ -91,7 +91,7 @@ const AddParticipantModal = ({ eventId, isOpen, onClose, onAdded }) => {
             </ul>
           )}
           {query.length >= 2 && suggestions.length === 0 && !selected && (
-            <p className="text-xs text-slate-400 mt-1">Aucun étudiant trouvé pour "{query}"</p>
+            <p className="text-xs text-slate-400 mt-1">Aucun étudiant trouvé pour &quot;{query}&quot;</p>
           )}
         </div>
 
@@ -126,7 +126,6 @@ const EventDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // id participation à supprimer
-  const [editEvent, setEditEvent] = useState(false);
 
   const load = useCallback(async () => {
     try {

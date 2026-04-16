@@ -11,7 +11,7 @@ const Page403 = () => {
         <p className="text-6xl mb-6">🔒</p>
         <h1 className="font-display text-3xl font-bold text-navy mb-3">Accès refusé</h1>
         <p className="text-slate-500 text-sm mb-8">
-          Vous n'avez pas les droits pour accéder à cette page.
+          Vous n&apos;avez pas les droits pour accéder à cette page.
         </p>
         <Button onClick={() => navigate(-1)}>← Retour</Button>
       </div>

@@ -49,7 +49,7 @@ const StudentsPage = () => {
 
       {searched && results.length === 0 && (
         <div className="card p-6 text-sm text-slate-500">
-          Aucun étudiant trouvé pour "{query}"
+          Aucun étudiant trouvé pour &quot;{query}&quot;
         </div>
       )}
 

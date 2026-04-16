@@ -11,7 +11,7 @@ const Page404 = () => {
         <p className="text-6xl mb-6">🔍</p>
         <h1 className="font-display text-3xl font-bold text-navy mb-3">Page introuvable</h1>
         <p className="text-slate-500 text-sm mb-8">
-          La ressource que vous cherchez n'existe pas ou a été supprimée.
+          La ressource que vous cherchez n&apos;existe pas ou a été supprimée.
         </p>
         <Button onClick={() => navigate('/dashboard')}>← Retour au tableau de bord</Button>
       </div>
