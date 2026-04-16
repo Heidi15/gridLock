@@ -25,7 +25,7 @@ const StudentsPage = () => {
       try {
         const res = await api.get('/students', { params: { q } });
         setResults(res.data);
-      } catch {}
+      } catch { /* silently ignore search error */ }
     }, 300);
   }, []);
 
