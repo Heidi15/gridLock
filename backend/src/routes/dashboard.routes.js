@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth.middleware');
-const requireRole = require('../middleware/role.middleware');
 const { getDashboard } = require('../controllers/dashboard.controller');
 
-router.get('/', auth, requireRole('admin', 'director'), getDashboard);
+// Accessible à tous les rôles authentifiés — le controller filtre par rôle
+router.get('/', auth, getDashboard);
 
 module.exports = router;
