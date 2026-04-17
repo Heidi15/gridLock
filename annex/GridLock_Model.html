@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GridLock — Maquettes écrans clés (US08)</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1F3A;--blue:#1A56A8;--accent:#3B82F6;--gold:#F59E0B;
+  --green:#22C55E;--red:#EF4444;--white:#FFFFFF;
+  --bg:#F1F5F9;--surface:#FFFFFF;--border:#E2E8F0;
+  --text:#0F172A;--muted:#64748B;--light:#F8FAFF;
+}
+body{font-family:'Inter',sans-serif;background:#0D1117;color:#e5e7eb;padding:2rem 1rem}
+h1{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;text-align:center;margin-bottom:0.4rem}
+.subtitle{text-align:center;color:#6b7280;font-size:0.85rem;margin-bottom:3rem}
+.screens-grid{display:flex;flex-direction:column;gap:4rem;max-width:1200px;margin:0 auto}
+.screen-wrap{background:#1a1f2e;border:1px solid #2d3748;border-radius:16px;padding:1.5rem}
+.screen-label{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:#6b7280;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem}
+.screen-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.25rem}
+.screen-desc{font-size:0.8rem;color:#6b7280;margin-bottom:1.5rem}
+
+/* DEVICE FRAME */
+.device{background:var(--white);border-radius:12px;overflow:hidden;border:1px solid #374151;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+
+/* SIDEBAR */
+.app-layout{display:grid;grid-template-columns:220px 1fr;min-height:560px}
+.sidebar{background:var(--navy);padding:1.5rem 0;display:flex;flex-direction:column}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;padding:0 1.25rem;margin-bottom:2rem}
+.logo span{color:var(--gold)}
+.nav-item{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 1.25rem;font-size:0.82rem;color:rgba(255,255,255,0.55);cursor:default;transition:all 0.15s}
+.nav-item.active{background:rgba(59,130,246,0.12);border-left:3px solid var(--accent);color:#93C5FD}
+.nav-item.active .ni{color:#93C5FD}
+.ni{font-size:14px;width:16px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,0.06)}
+.user-chip{display:flex;align-items:center;gap:0.6rem}
+.avatar-sm{width:28px;height:28px;border-radius:50%;background:rgba(59,130,246,0.2);color:#93C5FD;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.user-info{font-size:0.72rem;color:rgba(255,255,255,0.5)}
+.user-name{font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.85)}
+
+/* MAIN CONTENT */
+.main-content{background:var(--bg);padding:1.5rem;overflow:auto}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.page-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--text)}
+.breadcrumb{font-size:0.72rem;color:var(--muted);margin-top:0.15rem}
+.btn-primary{background:var(--blue);color:#fff;border:none;padding:0.45rem 1rem;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:default;font-family:'Inter',sans-serif}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);padding:0.45rem 1rem;border-radius:6px;font-size:0.8rem;font-weight:500;cursor:default}
+.btn-danger{background:var(--red);color:#fff;border:none;padding:0.35rem 0.8rem;border-radius:5px;font-size:0.75rem;font-weight:600;cursor:default}
+
+/* KPI CARDS */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.9rem 1rem}
+.kpi-num{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text)}
+.kpi-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:0.15rem}
+
+/* FILTERS */
+.filters{display:flex;gap:0.5rem;margin-bottom:1rem;align-items:center}
+.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.35rem 0.7rem;font-size:0.78rem;color:var(--muted);font-family:'Inter',sans-serif}
+.filter-select.active{border-color:var(--accent);color:var(--accent)}
+
+/* TABLES */
+.table-wrap{background:var(--surface);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);background:var(--light);padding:0.6rem 0.9rem;text-align:left;border-bottom:1px solid var(--border)}
+td{font-size:0.8rem;color:var(--text);padding:0.65rem 0.9rem;border-bottom:1px solid #f1f5f9}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8faff}
+
+/* BADGES */
+.badge{display:inline-block;font-size:0.65rem;font-weight:700;padding:0.2rem 0.55rem;border-radius:100px}
+.badge-salon{background:#DBEAFE;color:#1D4ED8}
+.badge-jpo{background:#FEF3C7;color:#92400E}
+.badge-forum{background:#D1FAE5;color:#065F46}
+.badge-event{background:#EDE9FE;color:#5B21B6}
+.badge-present{background:#D1FAE5;color:#065F46}
+.badge-confirme{background:#FEF3C7;color:#92400E}
+.badge-absent{background:#F1F5F9;color:#64748B}
+.badge-yes{background:#FEF9C3;color:#92400E;font-size:0.6rem}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:0.35rem}
+.form-label{font-size:0.78rem;font-weight:500;color:var(--text)}
+.form-input{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:0.5rem 0.75rem;font-size:0.82rem;color:var(--text);font-family:'Inter',sans-serif}
+.form-input.error{border-color:var(--red)}
+.form-error{font-size:0.72rem;color:var(--red)}
+.form-input:focus-within{border-color:var(--accent);outline:2px solid rgba(59,130,246,0.2)}
+.form-select{appearance:none;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:0.5rem 0.75rem;font-size:0.82rem;color:var(--text)}
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.form-section-title{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem}
+.form-actions{display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1rem}
+
+/* MODAL */
+.modal-backdrop{background:rgba(15,23,42,0.45);display:flex;align-items:center;justify-content:center;min-height:560px}
+.modal{background:#fff;border-radius:14px;padding:1.5rem;width:400px;box-shadow:0 25px 50px rgba(0,0,0,0.15)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.modal-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text)}
+.close-btn{font-size:1.1rem;color:var(--muted);cursor:default;line-height:1}
+.autocomplete-field{position:relative}
+.autocomplete-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:6px;margin-top:2px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.ac-item{padding:0.5rem 0.75rem;font-size:0.8rem;cursor:default}
+.ac-item:hover,.ac-item.selected{background:var(--light);color:var(--blue)}
+.ac-item strong{display:block;font-weight:600;color:var(--text)}
+.ac-item span{font-size:0.7rem;color:var(--muted)}
+
+/* STUDENT RECAP */
+.student-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.avatar-lg{width:44px;height:44px;border-radius:50%;background:rgba(59,130,246,0.1);color:var(--blue);font-size:0.85rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.student-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text)}
+.student-meta{font-size:0.78rem;color:var(--muted)}
+.stat-chips{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.4rem}
+.stat-chip{background:var(--light);border:1px solid var(--border);border-radius:6px;padding:0.25rem 0.6rem;font-size:0.72rem;font-weight:600;color:var(--text)}
+.stat-chip span{color:var(--blue)}
+
+/* EMPTY STATE */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1rem;gap:1rem}
+.empty-icon{font-size:2.5rem;opacity:0.3}
+.empty-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--muted)}
+.empty-desc{font-size:0.82rem;color:var(--muted);text-align:center;max-width:280px}
+
+/* ERROR BANNER */
+.error-banner{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:0.75rem 1rem;font-size:0.82rem;color:var(--red);display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem}
+
+/* TOAST */
+.toast{background:var(--navy);color:#fff;border-radius:8px;padding:0.7rem 1rem;font-size:0.8rem;display:inline-flex;align-items:center;gap:0.5rem;position:absolute;bottom:1.5rem;right:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.toast.success{background:#065F46;border:1px solid #34D399}
+.toast.error{background:#7F1D1D;border:1px solid #FCA5A5}
+
+/* STUDENT VIEW */
+.student-layout{display:grid;grid-template-columns:220px 1fr;min-height:560px}
+.student-main{background:var(--bg);padding:1.5rem}
+.welcome{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--text);margin-bottom:0.25rem}
+.year-label{font-size:0.78rem;color:var(--muted);margin-bottom:1.25rem}
+.year-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.part-list{display:flex;flex-direction:column;gap:0.5rem}
+.part-row{background:#fff;border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;display:flex;align-items:center;gap:0.75rem}
+.part-date{font-size:0.7rem;color:var(--muted);min-width:70px}
+.part-name{font-size:0.82rem;font-weight:600;color:var(--text);flex:1}
+.part-place{font-size:0.72rem;color:var(--muted)}
+.readonly-tag{font-size:0.62rem;background:#F1F5F9;color:#94A3B8;padding:0.15rem 0.4rem;border-radius:4px;font-weight:600;margin-left:auto}
+</style>
+</head>
+<body>
+<h1>GridLock — Maquettes Écrans Clés</h1>
+<p class="subtitle">US08 · Référence UI pour développeurs et agents IA · Avril 2026</p>
+
+<div class="screens-grid">
+
+  <!-- ÉCRAN 1 : DASHBOARD ADMIN -->
+  <div class="screen-wrap">
+    <div class="screen-label">Écran 1</div>
+    <div class="screen-title">Dashboard Admin — État normal</div>
+    <div class="screen-desc">Vue principale de la coordinatrice Sourcing. KPIs + liste des événements filtrables.</div>
+    <div class="device">
+      <div class="app-layout">
+        <div class="sidebar">
+          <div class="logo">Grid<span>Lock</span></div>
+          <div class="nav-item active"><span class="ni">⊞</span> Tableau de bord</div>
+          <div class="nav-item"><span class="ni">📅</span> Événements</div>
+          <div class="nav-item"><span class="ni">👥</span> Étudiants</div>
+          <div class="nav-item"><span class="ni">📊</span> Récapitulatif</div>
+          <div class="sidebar-footer">
+            <div class="user-chip">
+              <div class="avatar-sm">SD</div>
+              <div><div class="user-name">Sophie D.</div><div class="user-info">Admin</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="page-header">
+            <div><div class="page-title">Tableau de bord</div><div class="breadcrumb">Année 2025–2026</div></div>
+            <button class="btn-primary">+ Nouvel événement</button>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi"><div class="kpi-num">42</div><div class="kpi-label">Événements</div></div>
+            <div class="kpi"><div class="kpi-num">312</div><div class="kpi-label">Participations</div></div>
+            <div class="kpi"><div class="kpi-num">274</div><div class="kpi-label">Présents</div></div>
+            <div class="kpi"><div class="kpi-num">89</div><div class="kpi-label">Ambassadeurs</div></div>
+          </div>
+          <div class="filters">
+            <span style="font-size:0.75rem;color:var(--muted);font-weight:500;">Filtrer :</span>
+            <select class="filter-select active"><option>Tous les mois</option><option>Octobre</option></select>
+            <select class="filter-select"><option>Tous les types</option></select>
+            <select class="filter-select"><option>Toutes les formations</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Type</th><th>Événement</th><th>Ville</th><th>Inscrits</th><th>Présents</th></tr></thead>
+              <tbody>
+                <tr><td>03/10/25</td><td><span class="badge badge-salon">Salon</span></td><td>Salon Your Future</td><td>Paris</td><td>2</td><td>2</td></tr>
+                <tr><td>06/11/25</td><td><span class="badge badge-forum">Forum</span></td><td>Forum des réorientations CY</td><td>Cergy</td><td>2</td><td>0</td></tr>
+                <tr><td>14/11/25</td><td><span class="badge badge-forum">Forum</span></td><td>Forum des écoles — St François</td><td>Fontenay</td><td>3</td><td>3</td></tr>
+                <tr><td>22/11/25</td><td><span class="badge badge-forum">Forum</span></td><td>Forum orientation post-bac</td><td>IUT Saclay</td><td>3</td><td>2</td></tr>
+                <tr><td>26/11/25</td><td><span class="badge badge-event">Évènement</span></td><td>Mercredis de CY (orientation)</td><td>Pontoise</td><td>4</td><td>4</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 1B : ÉTAT VIDE -->
+  <div class="screen-wrap">
+    <div class="screen-label">Écran 1b</div>
+    <div class="screen-title">Dashboard Admin — État vide</div>
+    <div class="screen-desc">Affiché quand aucun événement n'a encore été créé pour l'année.</div>
+    <div class="device">
+      <div class="app-layout">
+        <div class="sidebar">
+          <div class="logo">Grid<span>Lock</span></div>
+          <div class="nav-item active"><span class="ni">⊞</span> Tableau de bord</div>
+          <div class="nav-item"><span class="ni">📅</span> Événements</div>
+          <div class="nav-item"><span class="ni">👥</span> Étudiants</div>
+          <div class="nav-item"><span class="ni">📊</span> Récapitulatif</div>
+          <div class="sidebar-footer">
+            <div class="user-chip"><div class="avatar-sm">SD</div><div><div class="user-name">Sophie D.</div><div class="user-info">Admin</div></div></div>
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="page-header">
+            <div><div class="page-title">Tableau de bord</div><div class="breadcrumb">Année 2025–2026</div></div>
+            <button class="btn-primary">+ Nouvel événement</button>
+          </div>
+          <div class="error-banner" style="display:none"></div>
+          <div class="table-wrap">
+            <div class="empty">
+              <div class="empty-icon">📅</div>
+              <div class="empty-title">Aucun événement cette année</div>
+              <div class="empty-desc">Commencez par créer le premier événement de la saison 2025–2026.</div>
+              <button class="btn-primary" style="margin-top:0.5rem">Créer le premier événement</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 1C : ÉTAT ERREUR -->
+  <div class="screen-wrap">
+    <div class="screen-label">Écran 1c</div>
+    <div class="screen-title">Dashboard Admin — État erreur</div>
+    <div class="screen-desc">Affiché si l'API ne répond pas ou retourne une erreur 500.</div>
+    <div class="device">
+      <div class="app-layout">
+        <div class="sidebar">
+          <div class="logo">Grid<span>Lock</span></div>
+          <div class="nav-item active"><span class="ni">⊞</span> Tableau de bord</div>
+          <div class="nav-item"><span class="ni">📅</span> Événements</div>
+          <div class="nav-item"><span class="ni">👥</span> Étudiants</div>
+          <div class="nav-item"><span class="ni">📊</span> Récapitulatif</div>
+          <div class="sidebar-footer">
+            <div class="user-chip"><div class="avatar-sm">SD</div><div><div class="user-name">Sophie D.</div><div class="user-info">Admin</div></div></div>
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="page-header">
+            <div><div class="page-title">Tableau de bord</div></div>
+          </div>
+          <div class="error-banner">⚠ Impossible de charger les données. Vérifiez votre connexion ou <span style="text-decoration:underline;cursor:default">réessayez</span>.</div>
+          <div class="table-wrap" style="opacity:0.4;pointer-events:none">
+            <table><thead><tr><th>Date</th><th>Type</th><th>Événement</th><th>Ville</th><th>Inscrits</th><th>Présents</th></tr></thead>
+            <tbody><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">—</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 2 : FORMULAIRE ÉVÉNEMENT -->
+  <div class="screen-wrap">
+    <div class="screen-label">Écran 2</div>
+    <div class="screen-title">Formulaire de création d'événement</div>
+    <div class="screen-desc">Validation en temps réel. Champ Type = liste déroulante figée.</div>
+    <div class="device">
+      <div class="app-layout">
+        <div class="sidebar">
+          <div class="logo">Grid<span>Lock</span></div>
+          <div class="nav-item active"><span class="ni">📅</span> Événements</div>
+          <div class="nav-item"><span class="ni">⊞</span> Tableau de bord</div>
+          <div class="nav-item"><span class="ni">👥</span> Étudiants</div>
+          <div class="nav-item"><span class="ni">📊</span> Récapitulatif</div>
+          <div class="sidebar-footer"><div class="user-chip"><div class="avatar-sm">SD</div><div><div class="user-name">Sophie D.</div><div class="user-info">Admin</div></div></div></div>
+        </div>
+        <div class="main-content">
+          <div class="page-header">
+            <div><div class="page-title">Nouvel événement</div><div class="breadcrumb">Événements › Créer</div></div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Informations générales</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Mois <span style="color:var(--red)">*</span></label>
+                <select class="form-select"><option>Novembre</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type d'événement <span style="color:var(--red)">*</span></label>
+                <select class="form-select"><option>Forum</option><option>JPO</option><option>Salon</option><option>Évènement</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date <span style="color:var(--red)">*</span></label>
+                <input class="form-input" type="text" value="2025-11-06">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Horaires</label>
+                <input class="form-input" type="text" placeholder="ex: 11h30 à 18h30" value="11h30 à 18h30">
+              </div>
+            </div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Lieu et structure</div>
+            <div class="form-grid">
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Nom de la structure <span style="color:var(--red)">*</span></label>
+                <input class="form-input error" type="text" value="">
+                <span class="form-error">Ce champ est obligatoire.</span>
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Nom de l'événement <span style="color:var(--red)">*</span></label>
+                <input class="form-input" type="text" value="Forum des réorientations">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ville <span style="color:var(--red)">*</span></label>
+                <input class="form-input" type="text" value="Cergy">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Besoins</label>
+                <input class="form-input" type="text" placeholder="ex: 1 étudiant Coding">
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-ghost">Annuler</button>
+            <button class="btn-primary" style="opacity:0.5;cursor:not-allowed">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 3 : FICHE ÉVÉNEMENT + MODALE -->
+  <div class="screen-wrap">
+    <div class="screen-label">Écran 3</div>
+    <div class="screen-title">Fiche événement + Modale d'inscription</div>
+    <div class="screen-desc">Liste des participants avec statuts. Modale avec auto-complétion sur les noms d'étudiants.</div>
+    <div class="device" style="position:relative;overflow:visible">
+      <div class="app-layout" style="filter:blur(1px);opacity:0.5">
+        <div class="sidebar">
+          <div class="logo">Grid<span>Lock</span></div>
+          <div class="nav-item active"><span class="ni">📅</span> Événements</div>
+          <div class="nav-item"><span class="ni">⊞</span> Tableau de bord</div>
+          <div class="nav-item"><span class="ni">👥</span> Étudiants</div>
+          <div class="nav-item"><span class="ni">📊</span> Récapitulatif</div>
+          <div class="sidebar-footer"><div class="user-chip"><div class="avatar-sm">SD</div><div><div class="user-name">Sophie D.</div><div class="user-info">Admin</div></div></div></div>
+        </div>
+        <div class="main-content">
+          <div class="page-header"><div><div class="page-title">Forum des réorientations CY</div><div class="breadcrumb">Événements › Forum des réorientations</div></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Étudiant</th><th>Formation</th><th>Statut</th><th>Ambassadeur</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>BERRADA Elias</td><td>ING 3</td><td><span class="badge badge-confirme">Confirmé</span></td><td>—</td><td><button class="btn-danger">Retirer</button></td></tr>
+            <tr><td>CHETOUANI Sulliman</td><td>ING 3</td><td><span class="badge badge-confirme">Confirmé</span></td><td>—</td><td><button class="btn-danger">Retirer</button></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <div class="modal-backdrop" style="position:absolute;top:0;left:0;width:100%;border-radius:12px">
+        <div class="modal">
+          <div class="modal-header">
+            <span class="modal-title">Inscrire un étudiant</span>
+            <span class="close-btn">✕</span>
+          </div>
+          <div class="form-group autocomplete-field" style="margin-bottom:0.75rem">
+            <label class="form-label">Nom de l'étudiant <span style="color:var(--red)">*</span></label>
+            <input class="form-input" type="text" value="VIL" placeholder="Tapez au moins 2 caractères...">
+            <div class="autocomplete-dropdown">
+              <div class="ac-item selected"><strong>VILLET SCHOUMAKER Maxence</strong><span>Coding Paris - DSNS - B2</span></div>
+              <div class="ac-item"><strong>VILLAIN Thomas</strong><span>ING 2</span></div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0.75rem;margin-top:0.75rem">
+            <label class="form-label">Statut <span style="color:var(--red)">*</span></label>
+            <select class="form-select"><option>Confirmé</option><option>Présent</option></select>
+          </div>
+          <div class="form-group" style="margin-bottom:1.25rem;flex-direction:row;align-items:center;gap:0.5rem">
+            <input type="checkbox" id="ambass" style="width:16px;height:16px">
+            <label for="ambass" class="form-label" style="margin:0">Ambassadeur</label>
+            <span class="badge badge-yes" style="margin-left:auto">Rôle spécial</span>
+          </div>
+          <div class="form-actions" style="margin-top:0">
+            <button class="btn-ghost">Annuler</button>
+            <button class="btn-primary">Inscrire l'étudiant</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 4 : RÉCAP PAR ÉTUDIANT -->
+  <div class="screen-wrap">
+    <div class="screen-label">Écran 4</div>
+    <div class="screen-title">Récapitulatif par étudiant (vue admin)</div>
+    <div class="screen-desc">Recherche avec auto-complétion. Fiche complète avec historique de participations.</div>
+    <div class="device">
+      <div class="app-layout">
+        <div class="sidebar">
+          <div class="logo">Grid<span>Lock</span></div>
+          <div class="nav-item"><span class="ni">⊞</span> Tableau de bord</div>
+          <div class="nav-item"><span class="ni">📅</span> Événements</div>
+          <div class="nav-item"><span class="ni">👥</span> Étudiants</div>
+          <div class="nav-item active"><span class="ni">📊</span> Récapitulatif</div>
+          <div class="sidebar-footer"><div class="user-chip"><div class="avatar-sm">SD</div><div><div class="user-name">Sophie D.</div><div class="user-info">Admin</div></div></div></div>
+        </div>
+        <div class="main-content">
+          <div class="page-header"><div><div class="page-title">Récapitulatif par étudiant</div></div></div>
+          <div class="form-group" style="margin-bottom:1rem">
+            <input class="form-input" type="text" value="VILLET" placeholder="Rechercher un étudiant...">
+          </div>
+          <div class="student-card">
+            <div class="avatar-lg">MV</div>
+            <div style="flex:1">
+              <div class="student-name">VILLET SCHOUMAKER Maxence</div>
+              <div class="student-meta">Coding Paris - DSNS - B2 · maxence.villet-schoumaker@edu.esiee-it.fr</div>
+              <div class="stat-chips">
+                <div class="stat-chip">Total : <span>4</span></div>
+                <div class="stat-chip">Salons : <span>2</span></div>
+                <div class="stat-chip">Forums : <span>1</span></div>
+                <div class="stat-chip" style="color:var(--gold);border-color:#FEF3C7;background:#FFFBEB">Ambassadeur ×2</div>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Événement</th><th>Type</th><th>Statut</th><th>Ambassadeur</th></tr></thead>
+              <tbody>
+                <tr><td>03/10/25</td><td>Salon Your Future</td><td><span class="badge badge-salon">Salon</span></td><td><span class="badge badge-present">Présent</span></td><td><span class="badge badge-yes">✓ Oui</span></td></tr>
+                <tr><td>22/11/25</td><td>Forum orientation post-bac</td><td><span class="badge badge-forum">Forum</span></td><td><span class="badge badge-absent">Absent</span></td><td>—</td></tr>
+                <tr><td>15/01/26</td><td>JPO Campus Pontoise</td><td><span class="badge badge-jpo">JPO</span></td><td><span class="badge badge-present">Présent</span></td><td><span class="badge badge-yes">✓ Oui</span></td></tr>
+                <tr><td>07/02/26</td><td>Salon EPITA Orientation</td><td><span class="badge badge-salon">Salon</span></td><td><span class="badge badge-confirme">Confirmé</span></td><td>—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 5 : VUE ÉTUDIANT -->
+  <div class="screen-wrap">
+    <div class="screen-label">Écran 5</div>
+    <div class="screen-title">Dashboard étudiant (vue personnelle — lecture seule)</div>
+    <div class="screen-desc">L'étudiant voit uniquement ses propres participations. Aucune modification possible.</div>
+    <div class="device">
+      <div class="student-layout">
+        <div class="sidebar">
+          <div class="logo">Grid<span>Lock</span></div>
+          <div class="nav-item active"><span class="ni">⊞</span> Mes participations</div>
+          <div class="nav-item"><span class="ni">👤</span> Mon profil</div>
+          <div class="sidebar-footer">
+            <div class="user-chip">
+              <div class="avatar-sm" style="background:rgba(34,197,94,0.15);color:#34D399">EG</div>
+              <div><div class="user-name">Enzo G.</div><div class="user-info">Étudiant</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="student-main">
+          <div class="welcome">Bonjour, Enzo 👋</div>
+          <div class="year-label">Votre bilan de participation — Année 2025–2026</div>
+          <div class="year-kpi">
+            <div class="kpi"><div class="kpi-num">3</div><div class="kpi-label">Participations</div></div>
+            <div class="kpi"><div class="kpi-num">2</div><div class="kpi-label">Présences</div></div>
+            <div class="kpi" style="border-color:#FEF3C7"><div class="kpi-num" style="color:var(--gold)">2×</div><div class="kpi-label">Ambassadeur</div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+            <span style="font-size:0.8rem;font-weight:600;color:var(--text)">Mes événements</span>
+            <select class="filter-select" style="font-size:0.72rem"><option>Tous les types</option></select>
+          </div>
+          <div class="part-list">
+            <div class="part-row">
+              <div class="part-date">03/10/25</div>
+              <div>
+                <div class="part-name">Salon Your Future</div>
+                <div class="part-place">Paris · Parc des Princes</div>
+              </div>
+              <span class="badge badge-salon">Salon</span>
+              <span class="badge badge-present">Présent</span>
+              <span class="badge badge-yes">✓ Ambass.</span>
+              <span class="readonly-tag">Lecture seule</span>
+            </div>
+            <div class="part-row">
+              <div class="part-date">22/11/25</div>
+              <div>
+                <div class="part-name">Forum orientation post-bac</div>
+                <div class="part-place">IUT de Saclay</div>
+              </div>
+              <span class="badge badge-forum">Forum</span>
+              <span class="badge badge-absent">Absent</span>
+              <span style="flex:1"></span>
+              <span class="readonly-tag">Lecture seule</span>
+            </div>
+            <div class="part-row">
+              <div class="part-date">15/01/26</div>
+              <div>
+                <div class="part-name">JPO Campus Pontoise</div>
+                <div class="part-place">Pontoise</div>
+              </div>
+              <span class="badge badge-jpo">JPO</span>
+              <span class="badge badge-present">Présent</span>
+              <span class="badge badge-yes">✓ Ambass.</span>
+              <span class="readonly-tag">Lecture seule</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;margin-top:3rem;font-size:0.75rem;color:#374151">
+  GridLock · US08 · Maquettes de référence UI · ESIEE-IT Projet IA 2026
+</div>
+</body>
+</html>

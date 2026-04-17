@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GridLock — ESIEE-IT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0B1F3A;
+      --navy-mid: #122D54;
+      --blue: #1A56A8;
+      --accent: #3B82F6;
+      --accent-light: #60A5FA;
+      --gold: #F59E0B;
+      --white: #FFFFFF;
+      --off-white: #F8FAFF;
+      --gray-light: #E8EEF7;
+      --gray-text: #64748B;
+      --text-dark: #0F172A;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      background: var(--white);
+      color: var(--text-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(11, 31, 58, 0.96);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--gold);
+      color: var(--navy);
+      padding: 0.45rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.9; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      padding: 80px 5% 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -10%;
+      left: -5%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: var(--accent-light);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 4vw, 3.8rem);
+      color: var(--white);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero-desc {
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      font-weight: 300;
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+    }
+    .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: transform 0.15s, opacity 0.15s;
+      font-family: 'Syne', sans-serif;
+    }
+    .btn-primary:hover { transform: translateY(-2px); opacity: 0.92; }
+    .btn-ghost {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--white); }
+    .btn-ghost::after { content: '↓'; }
+
+    /* DASHBOARD MOCKUP */
+    .hero-mockup {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+    }
+    .mockup-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FFBD2E; }
+    .dot-g { background: #28C840; }
+    .mockup-header {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mockup-title { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .mockup-badge {
+      background: rgba(245,158,11,0.2);
+      color: var(--gold);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--white); }
+    .stat-label { font-size: 0.65rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.05em; }
+    .event-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .event-row {
+      background: rgba(255,255,255,0.04);
+      border-radius: 6px;
+      padding: 0.6rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .event-info { flex: 1; }
+    .event-name { font-size: 0.8rem; font-weight: 500; color: rgba(255,255,255,0.9); }
+    .event-date { font-size: 0.68rem; color: rgba(255,255,255,0.4); }
+    .type-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+    }
+    .type-salon { background: rgba(59,130,246,0.2); color: #93C5FD; }
+    .type-jpo { background: rgba(245,158,11,0.2); color: #FCD34D; }
+    .type-forum { background: rgba(34,197,94,0.15); color: #86EFAC; }
+    .type-event { background: rgba(168,85,247,0.15); color: #D8B4FE; }
+    .status { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .s-ok { background: #34D399; }
+    .s-pending { background: #FCD34D; }
+
+    /* PROBLEM SECTION */
+    .section { padding: 6rem 5%; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 0.8rem;
+    }
+    .section h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+      color: var(--navy);
+    }
+    .section-desc {
+      color: var(--gray-text);
+      font-size: 1.05rem;
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 3rem;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .problem-card {
+      background: var(--off-white);
+      border: 1px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .problem-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #FEE2E2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .problem-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .problem-card p { font-size: 0.88rem; color: var(--gray-text); line-height: 1.6; }
+
+    /* BENEFITS */
+    .benefits-section {
+      background: var(--navy);
+      padding: 6rem 5%;
+    }
+    .benefits-inner { max-width: 1100px; margin: 0 auto; }
+    .benefits-section .section-label { color: var(--gold); }
+    .benefits-section h2 { color: var(--white); }
+    .benefits-section .section-desc { color: rgba(255,255,255,0.55); }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    .benefit-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 1.75rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .benefit-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: rgba(245,158,11,0.3);
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 3rem;
+    }
+    .benefit-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .benefit-card p { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* USAGE */
+    .usage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-top: 3rem;
+    }
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      position: relative;
+      padding-bottom: 2rem;
+    }
+    .step:last-child { padding-bottom: 0; }
+    .step-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    .step-connector {
+      width: 2px;
+      flex: 1;
+      background: var(--gray-light);
+      margin-top: 4px;
+    }
+    .step:last-child .step-connector { display: none; }
+    .step-body { padding-top: 4px; }
+    .step-body h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.35rem;
+    }
+    .step-body p { font-size: 0.88rem; color: var(--gray-text); line-height: 1.6; }
+
+    .usage-visual {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .recap-table { width: 100%; border-collapse: collapse; }
+    .recap-table th {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.4);
+      text-align: left;
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-weight: 500;
+    }
+    .recap-table td {
+      padding: 0.55rem 0.6rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .avatar {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(59,130,246,0.25);
+      color: #93C5FD;
+      font-size: 0.65rem;
+      font-weight: 700;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.4rem;
+    }
+    .count-badge {
+      display: inline-block;
+      background: rgba(59,130,246,0.15);
+      color: #93C5FD;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 100px;
+    }
+    .ambass-yes { color: #34D399; font-size: 0.75rem; }
+    .ambass-no { color: rgba(255,255,255,0.2); font-size: 0.75rem; }
+
+    /* ACCESS */
+    .access-section {
+      background: var(--off-white);
+      padding: 6rem 5%;
+    }
+    .access-inner { max-width: 1100px; margin: 0 auto; }
+    .access-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .access-card {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .access-card.featured {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(26,86,168,0.08);
+    }
+    .role-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+    .icon-admin { background: #EFF6FF; }
+    .icon-student { background: #F0FDF4; }
+    .icon-director { background: #FFFBEB; }
+    .access-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+    .access-card .role-desc { font-size: 0.85rem; color: var(--gray-text); margin-bottom: 1.25rem; }
+    .access-perms { list-style: none; text-align: left; }
+    .access-perms li {
+      font-size: 0.82rem;
+      color: var(--text-dark);
+      padding: 0.3rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .access-perms li::before { content: '✓'; color: var(--blue); font-weight: 700; }
+
+    /* CTA BANNER */
+    .cta-section {
+      background: var(--blue);
+      padding: 5rem 5%;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .cta-section p { color: rgba(255,255,255,0.7); font-size: 1rem; margin-bottom: 2rem; }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-white {
+      background: var(--white);
+      color: var(--blue);
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-white:hover { opacity: 0.9; }
+    .btn-outline-white {
+      border: 2px solid rgba(255,255,255,0.4);
+      color: var(--white);
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .btn-outline-white:hover { border-color: var(--white); }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy);
+      padding: 2.5rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--white);
+    }
+    .footer-logo span { color: var(--gold); }
+    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+
+    /* ANIMATION */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-text > * { animation: fadeUp 0.6s ease both; }
+    .hero-text > :nth-child(1) { animation-delay: 0.1s; }
+    .hero-text > :nth-child(2) { animation-delay: 0.2s; }
+    .hero-text > :nth-child(3) { animation-delay: 0.3s; }
+    .hero-text > :nth-child(4) { animation-delay: 0.4s; }
+    .hero-mockup { animation: fadeUp 0.7s 0.5s ease both; }
+
+    @media (max-width: 900px) {
+      .hero-content { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-mockup { display: none; }
+      .problem-grid { grid-template-columns: 1fr 1fr; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .usage-grid { grid-template-columns: 1fr; }
+      .access-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Grid<span>Lock</span></div>
+  <ul class="nav-links">
+    <li><a href="#probleme">Problème</a></li>
+    <li><a href="#benefices">Bénéfices</a></li>
+    <li><a href="#usage">Comment ça marche</a></li>
+    <li><a href="#acces">Accès</a></li>
+  </ul>
+  <a href="#acces" class="nav-cta">Accéder</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-tag">ESIEE-IT — Sourcing &amp; Engagement</div>
+      <h1>Le suivi des<br>événements,<br><span>sans Excel.</span></h1>
+      <p class="hero-desc">GridLock remplace le tableau Excel de suivi des participations étudiantes aux JPO, salons et forums par une application web structurée, fiable et accessible à toute l'équipe.</p>
+      <div class="hero-actions">
+        <a href="#acces" class="btn-primary">Accéder à l'application</a>
+        <a href="#probleme" class="btn-ghost">En savoir plus</a>
+      </div>
+    </div>
+    <div class="hero-mockup" aria-hidden="true">
+      <div class="mockup-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="mockup-header">
+        <span class="mockup-title">Tableau de bord — Année 2025-26</span>
+        <span class="mockup-badge">En direct</span>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num">42</div><div class="stat-label">Événements</div></div>
+        <div class="stat-card"><div class="stat-num">312</div><div class="stat-label">Participations</div></div>
+        <div class="stat-card"><div class="stat-num">89</div><div class="stat-label">Ambassadeurs</div></div>
+      </div>
+      <div class="event-list">
+        <div class="event-row">
+          <div class="event-info">
+            <div class="event-name">Salon Your Future</div>
+            <div class="event-date">03 Oct 2025 · Paris</div>
+          </div>
+          <span class="type-badge type-salon">Salon</span>
+          <div class="status s-ok"></div>
+        </div>
+        <div class="event-row">
+          <div class="event-info">
+            <div class="event-name">Forum des réorientations CY</div>
+            <div class="event-date">06 Nov 2025 · Cergy</div>
+          </div>
+          <span class="type-badge type-forum">Forum</span>
+          <div class="status s-pending"></div>
+        </div>
+        <div class="event-row">
+          <div class="event-info">
+            <div class="event-name">JPO Campus Pontoise</div>
+            <div class="event-date">15 Jan 2026 · Pontoise</div>
+          </div>
+          <span class="type-badge type-jpo">JPO</span>
+          <div class="status s-ok"></div>
+        </div>
+        <div class="event-row">
+          <div class="event-info">
+            <div class="event-name">Rencontre des anciens</div>
+            <div class="event-date">01 Oct 2025 · Paris</div>
+          </div>
+          <span class="type-badge type-event">Évènement</span>
+          <div class="status s-ok"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLÈME -->
+<section class="section" id="probleme">
+  <div class="section-inner">
+    <div class="section-label">Le problème</div>
+    <h2>Excel n'a pas été conçu<br>pour ça.</h2>
+    <p class="section-desc">L'équipe Sourcing gère aujourd'hui chaque participation dans un fichier partagé. Résultat : données fragiles, visibilité nulle pour les étudiants, bilan difficile à produire.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">⚠</div>
+        <h3>Saisie manuelle et erreurs</h3>
+        <p>Noms mal saisis, doublons, formules cassées après chaque ajout de ligne. Chaque mise à jour est un risque.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon" style="background:#FEF9C3;">⏱</div>
+        <h3>Chronophage</h3>
+        <p>Retrouver un étudiant, consolider les présences, générer un bilan : autant de tâches qui mobilisent inutilement l'équipe.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon" style="background:#F0FDF4;">🔒</div>
+        <h3>Zéro visibilité étudiante</h3>
+        <p>Les étudiants n'ont aucun accès à leurs propres participations. Ils doivent demander à un coordinateur pour connaître leur bilan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BÉNÉFICES -->
+<section class="benefits-section" id="benefices">
+  <div class="benefits-inner">
+    <div class="section-label">La valeur ajoutée</div>
+    <h2>Ce que vous gagnez<br>avec GridLock</h2>
+    <p class="section-desc" style="color:rgba(255,255,255,0.55);">Une application pensée pour les équipes Sourcing des écoles, avec des fonctionnalités qui répondent exactement aux besoins du terrain.</p>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-num">01</div>
+        <div>
+          <h3>Saisie guidée et rapide</h3>
+          <p>Auto-complétion sur la base apprenants, champs obligatoires clairs. Fini les erreurs de frappe sur les noms.</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">02</div>
+        <div>
+          <h3>Récapitulatif en temps réel</h3>
+          <p>Par événement (nb inscrits / présents / ambassadeurs) et par étudiant (toutes ses participations). Sans tableau croisé dynamique.</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">03</div>
+        <div>
+          <h3>Filtres intelligents</h3>
+          <p>Filtrer par mois, type d'événement (JPO, Salon, Forum), formation ou statut. La vue que vous voulez, quand vous en avez besoin.</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">04</div>
+        <div>
+          <h3>Vue individuelle pour chaque étudiant</h3>
+          <p>Chaque ambassadeur accède à son propre historique de participations sans solliciter l'équipe Sourcing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USAGE -->
+<section class="section" id="usage">
+  <div class="section-inner">
+    <div class="section-label">Comment ça marche</div>
+    <h2>Trois étapes pour suivre<br>une participation</h2>
+    <p class="section-desc">Un parcours simple pour les coordinateurs, une interface claire pour les étudiants.</p>
+    <div class="usage-grid">
+      <div class="steps">
+        <div class="step">
+          <div class="step-line">
+            <div class="step-circle">1</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-body">
+            <h4>Créer ou sélectionner un événement</h4>
+            <p>JPO, Salon, Forum, Évènement — renseignez date, lieu, structure accueillante et créneaux horaires.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-circle">2</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-body">
+            <h4>Inscrire les étudiants</h4>
+            <p>Saisissez le nom de l'étudiant (auto-complétion depuis la base apprenants), sa formation et son statut : Confirmé ou Ambassadeur.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-circle">3</div>
+          </div>
+          <div class="step-body">
+            <h4>Marquer la présence après l'événement</h4>
+            <p>En un clic, basculez chaque étudiant de "Confirmé" à "Présent". Le récapitulatif se met à jour instantanément.</p>
+          </div>
+        </div>
+      </div>
+      <div class="usage-visual" aria-label="Aperçu du récapitulatif par étudiant">
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;font-weight:500;">Récapitulatif par étudiant</div>
+        <table class="recap-table">
+          <thead>
+            <tr>
+              <th>Étudiant</th>
+              <th>Participations</th>
+              <th>Ambassadeur</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="avatar">EG</span>GRIGNON Enzo</td>
+              <td><span class="count-badge">3</span></td>
+              <td class="ambass-yes">✓ Oui</td>
+            </tr>
+            <tr>
+              <td><span class="avatar" style="background:rgba(245,158,11,0.2);color:#FCD34D;">MV</span>VILLET-SCHOUMAKER M.</td>
+              <td><span class="count-badge">4</span></td>
+              <td class="ambass-yes">✓ Oui</td>
+            </tr>
+            <tr>
+              <td><span class="avatar" style="background:rgba(34,197,94,0.15);color:#86EFAC;">LM</span>MERABET Léa</td>
+              <td><span class="count-badge">2</span></td>
+              <td class="ambass-yes">✓ Oui</td>
+            </tr>
+            <tr>
+              <td><span class="avatar" style="background:rgba(168,85,247,0.15);color:#D8B4FE;">EB</span>BERRADA Elias</td>
+              <td><span class="count-badge">1</span></td>
+              <td class="ambass-no">—</td>
+            </tr>
+            <tr>
+              <td><span class="avatar" style="background:rgba(239,68,68,0.15);color:#FCA5A5;">SC</span>CHETOUANI Sulliman</td>
+              <td><span class="count-badge">1</span></td>
+              <td class="ambass-no">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCÈS -->
+<section class="access-section" id="acces">
+  <div class="access-inner">
+    <div class="section-label">Accès &amp; rôles</div>
+    <h2>Un rôle adapté<br>à chaque utilisateur</h2>
+    <p class="section-desc">GridLock propose trois niveaux d'accès correspondant aux besoins réels identifiés dans le cadrage.</p>
+    <div class="access-grid">
+      <div class="access-card featured">
+        <div class="role-icon icon-admin">🛠</div>
+        <h3>Admin / Coordinateur</h3>
+        <p class="role-desc">Équipe Sourcing ESIEE-IT</p>
+        <ul class="access-perms">
+          <li>Créer et gérer les événements</li>
+          <li>Inscrire et modifier les participations</li>
+          <li>Marquer les présences et statuts</li>
+          <li>Consulter tous les récapitulatifs</li>
+          <li>Filtrer par mois, type, formation</li>
+        </ul>
+      </div>
+      <div class="access-card">
+        <div class="role-icon icon-student">🎓</div>
+        <h3>Étudiant</h3>
+        <p class="role-desc">Ambassadeurs et participants</p>
+        <ul class="access-perms">
+          <li>Accéder à son profil personnel</li>
+          <li>Voir ses participations et statuts</li>
+          <li>Filtrer par type d'événement</li>
+          <li>Consulter les détails de chaque événement</li>
+        </ul>
+      </div>
+      <div class="access-card">
+        <div class="role-icon icon-director">📊</div>
+        <h3>Directeur</h3>
+        <p class="role-desc">Direction des admissions</p>
+        <ul class="access-perms">
+          <li>Consulter le tableau de bord global</li>
+          <li>Filtrer par type d'événement</li>
+          <li>Voir les statistiques par formation</li>
+          <li>Lecture seule — pas de modification</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:2.5rem;padding:1.5rem;background:var(--white);border:1px solid var(--gray-light);border-radius:12px;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--navy);margin-bottom:0.25rem;">Vous êtes coordinateur Sourcing ?</div>
+        <div style="font-size:0.88rem;color:var(--gray-text);">Contactez l'équipe projet pour obtenir vos identifiants d'accès administrateur.</div>
+      </div>
+      <a href="mailto:sourcing@esiee-it.fr" class="btn-primary" style="white-space:nowrap;margin-left:auto;">Demander l'accès</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Prêt à abandonner le tableau Excel ?</h2>
+  <p>GridLock est déployé et prêt à être utilisé par votre équipe dès maintenant.</p>
+  <div class="cta-buttons">
+    <a href="#" class="btn-white">Accéder à l'application</a>
+    <a href="#" class="btn-outline-white">Voir la documentation</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Grid<span>Lock</span></div>
+  <p>Projet étudiant ESIEE-IT — Utilisation de l'IA · Année 2025-2026</p>
+  <p style="color:rgba(255,255,255,0.2);">Données hébergées en interne</p>
+</footer>
+
+</body>
+</html>
