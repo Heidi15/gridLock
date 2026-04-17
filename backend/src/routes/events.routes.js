@@ -24,8 +24,8 @@ router.post('/', auth, requireRole('admin'), validate(eventCreateSchema), create
 router.put('/:id', auth, requireRole('admin'), validate(eventUpdateSchema), updateEvent);
 router.delete('/:id', auth, requireRole('admin'), deleteEvent);
 
-// Inscription : tous les utilisateurs authentifiés
-// Les étudiants peuvent s'inscrire eux-mêmes, les admins peuvent inscrire n'importe quel étudiant
-router.post('/:id/participations', auth, validate(participationCreateSchema), createParticipation);
+// Inscription : admin et director uniquement (ils inscrivent les étudiants)
+// ← changed from open-to-all-authenticated to requireRole('admin', 'director')
+router.post('/:id/participations', auth, requireRole('admin', 'director'), validate(participationCreateSchema), createParticipation);
 
 module.exports = router;
